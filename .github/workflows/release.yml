@@ -38,10 +38,30 @@ jobs:
           name: client
           path: ./src/client/client
 
+  generate-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Generate Minimal PDF
+        uses: rseng/pdf-generator@0.0.4
+        with:
+          paper_markdown: doc/specification.md
+          paper_outfile: doc/specification.pdf
+          pdf_type: minimal
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v2
+        with:
+          name: specification
+          path: doc/specification.pdf
+
   release:
     runs-on: ubuntu-latest
 
-    needs: build
+    needs: [build, generate-pdf]
 
     steps:
       - name: Checkout repository
@@ -64,6 +84,12 @@ jobs:
           name: client
           path: ./client
 
+      - name: Download specification
+        uses: actions/download-artifact@v2
+        with:
+          name: specification
+          path: ./doc
+
       - name: Tag the repository
         id: tag
         run: |
@@ -80,4 +106,5 @@ jobs:
           files: |
             ./server/server
             ./client/client
+            ./doc/specification.pdf
           tag_name: ${{ steps.tag.outputs.tag }}
