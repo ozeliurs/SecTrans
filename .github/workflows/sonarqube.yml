@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build-analyze:
     name: Build
-    runs-on: <image ready for your build toolchain>
+    runs-on: ubuntu-latest
     permissions: read-all
     steps:
       - uses: actions/checkout@v2
