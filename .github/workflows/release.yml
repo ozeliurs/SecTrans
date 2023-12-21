@@ -1,0 +1,34 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up GCC
+        run: sudo apt-get install gcc
+
+      - name: Compile server
+        working-directory: ./src/server
+        run: make
+
+      - name: Compile client
+        working-directory: ./src/client
+        run: make
+
+  release:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        run: ls -laR
