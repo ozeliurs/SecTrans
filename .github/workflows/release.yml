@@ -58,6 +58,9 @@ jobs:
           name: client
           path: ./client
 
+      - name: List files
+        run: ls -laR
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
