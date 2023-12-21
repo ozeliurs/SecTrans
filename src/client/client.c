@@ -11,5 +11,5 @@ int main(int argc, char *argv[]) {
     // Fill msg with "Hello World!"
     strcpy(msg, "Hello World!");
 
-    sndmsg("Hello World!", 8080);
+    sndmsg(msg, 8080);
 }
