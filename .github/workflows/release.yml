@@ -58,15 +58,14 @@ jobs:
           name: client
           path: ./client
 
-      - name: List files
-        run: ls -laR
-
       - name: Release
         uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
-            ./server
-            ./client
+            ./server/server
+            ./client/client
           tag_name: ${{ github.ref }}
           body: |
             Release ${{ github.ref }}
