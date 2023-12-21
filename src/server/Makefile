@@ -11,4 +11,4 @@ libserver.a: server.h server.c
 	ar rcs libserver.a server.o
 
 clean:
-	rm -f server libserver.a server.o
+	rm -f server server.o libserver.a
