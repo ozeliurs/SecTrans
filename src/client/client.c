@@ -3,7 +3,13 @@
 //
 
 #include "client.h"
+#include <string.h>
 
 int main(int argc, char *argv[]) {
-    sndmsg("Hello World!", 8080);
+    char msg[1024];
+
+    // Fill msg with "Hello World!"
+    strcpy(msg, "Hello World!");
+
+    sndmsg(msg, 8080);
 }
