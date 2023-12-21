@@ -18,6 +18,7 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           cd ./src
           $HOME/.sonar/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir bw-output make all
+          ls -la
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
