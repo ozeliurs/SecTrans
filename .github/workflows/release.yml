@@ -58,30 +58,14 @@ jobs:
           name: client
           path: ./client
 
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.sha }}
-          release_name: Release ${{ github.sha }}
+          files: |
+            ./server
+            ./client
+          tag_name: ${{ github.ref }}
           body: |
-            Changes in this release:
-            - Compiled server and client executables
-
-      - name: Upload release artifacts
-        id: upload-release-assets
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./server
-          asset_name: server
-          asset_content_type: application/octet-stream
-
-      - uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./client
-          asset_name: client
-          asset_content_type: application/octet-stream
+            Release ${{ github.ref }}
+          draft: false
+          prerelease: false
