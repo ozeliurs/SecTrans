@@ -62,3 +62,4 @@ jobs:
           files: |
             ./server/server
             ./client/client
+          tag_name: ${{ github.sha }}
