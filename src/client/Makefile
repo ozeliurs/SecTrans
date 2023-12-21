@@ -11,4 +11,4 @@ libclient.a: client.h client.c
 	ar rcs libclient.a client.o
 
 clean:
-	rm -f client libclient.a client.os
+	rm -f client client.o libclient.a
