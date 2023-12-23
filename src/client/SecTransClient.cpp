@@ -4,6 +4,15 @@
 
 #include "SecTransClient.h"
 
+#include <iostream>
+#include <cstdlib>
+#include <getopt.h>
+#include <string>
+#include <cstring>
+#include <filesystem>
+#include "../lib/ultimateClient.h"
+#include "../lib/ultimateServer.h"
+
 SecTransClient::SecTransClient() {
     startserver(CLIENT_PORT);
 }
@@ -12,26 +21,26 @@ SecTransClient::~SecTransClient() throw() {
     stopserver();
 }
 
-void SecTransClient::upload(const char *file) {
-    std::string filename = file;
-    char msg[1024];
-    Message(UPLOAD, filename).toString(msg);
-    sndmsg(msg, SERVER_PORT);
+void SecTransClient::upload(std::string filename) {
+    // U[filename]
+    std::string message = "U" + filename;
+
+    send(message, SERVER_PORT);
+    // Upload file
 }
 
-void SecTransClient::download(const char *file) {
-    std::string filename = file;
-    char msg[1024];
-    Message(DOWNLOAD, filename).toString(msg);
-    sndmsg(msg, SERVER_PORT);
+void SecTransClient::download(std::string filename) {
+    std::string message = "D" + filename;
+    send(message, SERVER_PORT);
+    // Download File
 }
 
 void SecTransClient::list() {
-    char msg[1024];
-    Message(LIST, "").toString(msg)
-    sndmsg(msg, SERVER_PORT);
+    send("L", SERVER_PORT);
+    startserver(CLIENT_PORT);
+    std::string msg;
 
-    char msg[1024];
-    getmsg(msg);
+    receive(msg);
+
     std::cout << msg << std::endl;
 }

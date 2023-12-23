@@ -5,10 +5,10 @@
 #ifndef SECTRANS_SECTRANSCLIENT_H
 #define SECTRANS_SECTRANSCLIENT_H
 
-#include "../lib/client.h"
-#include "../lib/server.h"
 #include <iostream>
 #include "Message.h"
+#include "../lib/ultimateClient.h"
+#include "../lib/ultimateServer.h"
 
 class SecTransClient {
 private:
@@ -17,8 +17,8 @@ private:
 public:
     SecTransClient();
     ~SecTransClient() throw();
-    void upload(const char *file);
-    void download(const char *file);
+    void upload(std::string filename);
+    void download(std::string filename);
     void list();
 };
 

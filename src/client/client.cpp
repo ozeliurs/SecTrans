@@ -32,24 +32,23 @@ int main(int argc, char *argv[]) {
      SecTransClient client = SecTransClient();
 
     int option;
-    while ((option = getopt_long(argc, argv, "ud:l", long_options, nullptr)) != -1) {
-        switch (option) {
-            case 'u':
-                client.upload(optarg);
-                break;
+    option = getopt_long(argc, argv, "ud:l", long_options, nullptr);
+    switch (option) {
+        case 'u':
+            client.upload(optarg);
+            break;
 
-            case 'd':
-                client.download(optarg);
-                break;
+        case 'd':
+            client.download(optarg);
+            break;
 
-            case 'l':
-                client.list();
-                break;
+        case 'l':
+            client.list();
+            break;
 
-            default:
-                helpCommand(argv[0]);
-                std::exit(EXIT_FAILURE);
-        }
+        default:
+            helpCommand(argv[0]);
+            std::exit(EXIT_FAILURE);
     }
 
     return 0;
