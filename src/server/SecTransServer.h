@@ -5,8 +5,6 @@
 #ifndef SECTRANS_SECTRANSSERVER_H
 #define SECTRANS_SECTRANSSERVER_H
 
-#include "../lib/client.h"
-#include "../lib/server.h"
 #include "../lib/ultimateClient.h"
 #include <iostream>
 
@@ -22,8 +20,6 @@ private:
 public:
     SecTransServer();
     ~SecTransServer() throw();
-    void start();
-    void stop();
     void treatMessage(std::string message);
 };
 

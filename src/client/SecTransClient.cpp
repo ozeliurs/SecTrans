@@ -4,21 +4,12 @@
 
 #include "SecTransClient.h"
 
-#include <iostream>
-#include <cstdlib>
-#include <getopt.h>
-#include <string>
-#include <cstring>
-#include <filesystem>
-#include "../lib/ultimateClient.h"
-#include "../lib/ultimateServer.h"
-
 SecTransClient::SecTransClient() {
-    startserver(CLIENT_PORT);
+    start(CLIENT_PORT);
 }
 
 SecTransClient::~SecTransClient() throw() {
-    stopserver();
+    stop();
 }
 
 void SecTransClient::upload(std::string filename) {
@@ -37,7 +28,7 @@ void SecTransClient::download(std::string filename) {
 
 void SecTransClient::list() {
     send("L", SERVER_PORT);
-    startserver(CLIENT_PORT);
+    start(CLIENT_PORT);
     std::string msg;
 
     receive(msg);

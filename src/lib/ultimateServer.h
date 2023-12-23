@@ -5,12 +5,12 @@
 #include <string>
 #include "server.h"
 
-int startserver(int port){
+int start(int port){
     std::cout << "Starting server on port " << port << std::endl;
     return startserver(port);
 }
 
-int stopserver() {
+int stop() {
     std::cout << "Stopping server" << std::endl;
     return stopserver();
 }

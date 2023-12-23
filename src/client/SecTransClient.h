@@ -6,7 +6,6 @@
 #define SECTRANS_SECTRANSCLIENT_H
 
 #include <iostream>
-#include "Message.h"
 #include "../lib/ultimateClient.h"
 #include "../lib/ultimateServer.h"
 
