@@ -12,8 +12,8 @@
 
 class SecTransClient {
 private:
-    int CLIENT_PORT = 8080;
-    int SERVER_PORT = 8081;
+    static const int CLIENT_PORT = 8080;
+    static const int SERVER_PORT = 8081;
 public:
     SecTransClient();
     ~SecTransClient() throw();

@@ -20,14 +20,14 @@ class Message {
 private:
     Action action;
     std::string filename;
-    int MESSAGE_SIZE = 1024;
+    static const int MESSAGE_SIZE = 1024;
 public:
     Message(Action action, std::string filename) {
         this->action = action;
         this->filename = filename;
     }
 
-    char *toString() {
+    void toString(char* msg) {
         std::string str;
 
         switch (action) {
@@ -49,7 +49,9 @@ public:
 
         str = str + filename;
 
-        return (char *) str.c_str();
+        for (int i = 0; i < MESSAGE_SIZE; i++) {
+            msg[i] = str[i];
+        }
     }
 };
 
