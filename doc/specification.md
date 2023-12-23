@@ -14,62 +14,65 @@ on the threat model that you also have to establish. Such countermeasures typica
 control and cryptography. The threat model will investigate security and privacy threats to the
 application and will also have to be documented.*
 
-## 1. System Architecture:
+## 1. System Architecture
 
-1.1 Overview:
-Define the overall structure of the system, emphasizing the client-server communication aspect. This should include a brief description of the major components, their roles, and how they interact.
+The system architecture is based on a client-server model. 
+I have noted in the requirements that the client can connect from "Home", that means communication between the client and the server will be done over potentially insecure networks, thus the need to encrypt our communications.
 
-1.2 Integration of Macrohard Corporation's Library:
-Incorporate the selected client-server communications library from Macrohard Corporation into the system architecture. Clearly define how this library will be utilized for data transfers and identify any potential limitations or constraints imposed by the library.
+### 1.1. Client
 
-1.3 System Components:
-Identify and describe key system components, such as clients, servers, databases, and any other relevant components. Specify their functionalities and interactions.
+The client will have 4 major components:
 
-1.4 Data Flow and Communication:
-Illustrate the flow of data between different components, emphasizing the communication pathways facilitated by the Macrohard library. This should cover data transfer protocols, message formats, and any other relevant communication details.
+- A CLI (Command Line Interface) that will allow the user to interact with the system.
+- A File Management Library that will allow the client to upload, download, delete and list files.
+- A cryptographic module that will allow the client to encrypt and decrypt the files, authenticate the users and encrypt the connection between the client and the server.
+- The Microhard library that will allow the client to communicate with the server.
+
+### 1.2. Server
+
+The server will have 4 major components:
+
+- A REST API that will allow the client to communicate with the server.
+- The Microhard library that will allow the server to communicate with the client.
+- A database that will store metadata about the files and the users.
+- A cryptographic module that will allow the server to encrypt and decrypt the files, authenticate the users and encrypt the connection between the client and the server.
+
+### 1.3. Communication
+
+Here is an example of a communication between the client and the server for a file upload:
+
+![Communication Diagram](./assets/communication-diagram.svg)
 
 ## 2. Security Architecture:
 
 2.1 Threat Model:
-Define a comprehensive threat model by identifying potential security and privacy threats to the application. Consider external and internal threats, including unauthorized access, data breaches, and privacy violations. Document these threats and their potential impact.
+
+I have noted 3 major threats to the system:
+
+- Unauthorized access to the system.
+    Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access. I will concentrate on protecting the files from being accessed by unauthorized users as a server but will rely on the unix permissions to protect the files from being accessed by unauthorized users as a process.
+- Remote code execution.
+    The server will be running on a remote machine, thus the need to protect it from remote code execution. We could reduce the risk of remote code execution by running the server as a non-root user and by running it in a container.
+- Data breaches.
+    The server will be storing potentially sensitive data, thus the need to protect it from data breaches. We could reduce the risk of data breaches by encrypting the data at rest and by encrypting the connection between the client and the server.
 
 2.2 Access Control:
-Implement access control mechanisms to mitigate unauthorized access. Define user roles and privileges, and enforce access controls at various levels within the system. This could include user authentication, authorization, and session management.
+
+The access control will be very simple as this is a small project, I will only implement 2 roles:
+- Authenticated User: The authenticated user will be able to read, create, update and delete files.
+- Anonymous User: The anonymous user won't be able to read, create, update or delete files.
 
 2.3 Cryptographic Measures:
-Incorporate cryptographic measures to ensure data confidentiality, integrity, and authenticity. Implement encryption for data in transit and at rest. Utilize secure key management practices to protect cryptographic keys.
+To ensure data confidentiality, integrity and authenticity, I will use the following cryptographic measures:
+
+- Encryption of the connection between the client and the server using a cryptographic protocol.
+- Storage of files hashed with a cryptographic hash function in the database.
+- Encryption of the files at rest using a cryptographic protocol.
 
 2.4 Security Monitoring and Logging:
-Integrate a robust security monitoring system to detect and respond to security incidents promptly. Implement comprehensive logging to track system activities and potential security events.
-
-2.5 Regular Security Audits and Assessments:
-Establish a routine schedule for security audits and assessments to identify and address vulnerabilities. This includes penetration testing, code reviews, and security assessments of third-party components.
-
-2.6 Incident Response Plan:
-Develop a detailed incident response plan to address security incidents effectively. Define roles and responsibilities, incident detection and reporting procedures, and recovery processes.
-
-2.7 Compliance Measures:
-Ensure that the security architecture aligns with relevant industry regulations and standards. This may include GDPR, HIPAA, or other applicable standards based on the nature of the application and data processed.
+I will implement a logging system that will log all the actions performed by the users. This will allow us to monitor the system and to detect suspicious activities.
 
 ## 3. Integration of Security Measures:
 
-3.1 Incorporating Security into System Components:
-Specify how each system component will integrate the defined security measures. This includes modifying existing components or introducing new ones to enhance security.
-
-3.2 Testing and Validation:
-Establish a comprehensive testing plan to validate the effectiveness of security measures. This should include unit testing, integration testing, and end-to-end security testing.
-
-3.3 Documentation:
-Document the security architecture, including access control policies, cryptographic protocols, and incident response procedures. This documentation should serve as a reference for developers, administrators, and auditors.
-
-## 4. Ongoing Maintenance and Improvement:
-
-4.1 Continuous Monitoring:
-Implement continuous monitoring of the system's security posture. Use tools and processes to identify and respond to emerging threats and vulnerabilities.
-
-4.2 Periodic Review and Updates:
-Regularly review and update the security architecture based on changes in the threat landscape, system requirements, or technology advancements.
-
-4.3 Employee Training:
-Conduct regular training sessions for employees to raise awareness of security best practices and ensure adherence to security policies.
-
+Both Client and Server will use a cryptographic module that will implement the cryptographic measures described above.
+The Server will also use a sqlite database to store the metadata about the files and the users.
