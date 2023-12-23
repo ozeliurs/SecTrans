@@ -7,8 +7,6 @@
 #include <getopt.h>
 #include <string>
 #include <cstring>
-#include <unistd.h>
-#include "client.h"
 
 void uploadCommand(const char* file) {
     std::cout << "Executing upload command with file: " << file << "\n";
