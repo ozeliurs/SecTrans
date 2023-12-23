@@ -3,10 +3,10 @@ CFLAGS = -Wall -Werror
 
 all: client
 
-client: client.c libclient.a
+client: client.cpp libclient.a
 	$(CC) $(CFLAGS) -o client client.c -L. -lclient -Wl,-rpath,. -Wl,-Bstatic -lclient -Wl,-Bdynamic
 
-libclient.a: client.h client.c
+libclient.a: client.h client.cpp
 	$(CC) $(CFLAGS) -c -o client.o client.c
 	ar rcs libclient.a client.o
 
