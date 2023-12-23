@@ -1,14 +1,13 @@
-CC = gcc
-CFLAGS = -Wall -Werror
+CC = g++
+CFLAGS = -Wall -std=c++11
 
 all: client
 
-client: client.cpp libclient.a
-	$(CC) $(CFLAGS) -o client client.cpp -L. -lclient -Wl,-rpath,. -Wl,-Bstatic -lclient -Wl,-Bdynamic
+client: client.o libclient.so
+	$(CC) $(CFLAGS) -o client client.o -Wl,-Bstatic -l:libclient.so
 
-libclient.a: client.h client.cpp
-	$(CC) $(CFLAGS) -c -o client.o client.cpp
-	ar rcs libclient.a client.o
+client.o: client.cpp
+	$(CC) $(CFLAGS) -c client.cpp
 
 clean:
-	rm -f client client.o libclient.a
+	rm -f client client.o

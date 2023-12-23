@@ -5,6 +5,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <getopt.h>
+#include <string>
+#include <cstring>
+#include <unistd.h>
 #include "client.h"
 
 void uploadCommand(const char* file) {

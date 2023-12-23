@@ -1,14 +1,13 @@
-CC = gcc
-CFLAGS = -Wall -Werror
+CC = g++
+CFLAGS = -Wall -std=c++11
 
 all: server
 
-server: server.cpp libserver.a
-	$(CC) $(CFLAGS) -o server server.cpp -L. -lserver -Wl,-rpath,. -Wl,-Bstatic -lserver -Wl,-Bdynamic
+server: server.o libserver.so
+	$(CC) $(CFLAGS) -o server server.o -Wl,-Bstatic -l:libserver.so
 
-libserver.a: server.h server.cpp
-	$(CC) $(CFLAGS) -c -o server.o server.cpp
-	ar rcs libserver.a server.o
+server.o: server.cpp
+	$(CC) $(CFLAGS) -c server.cpp
 
 clean:
-	rm -f server server.o libserver.a
+	rm -f server server.o
