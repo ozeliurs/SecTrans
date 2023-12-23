@@ -5,9 +5,18 @@
 #ifndef SECTRANS_SECTRANSCLIENT_H
 #define SECTRANS_SECTRANSCLIENT_H
 
+#include "../lib/client.h"
+#include "../lib/server.h"
+#include <iostream>
+#include "Message.h"
 
 class SecTransClient {
+private:
+    int CLIENT_PORT = 8080;
+    int SERVER_PORT = 8081;
 public:
+    SecTransClient();
+    ~SecTransClient() throw();
     void upload(const char *file);
     void download(const char *file);
     void list();

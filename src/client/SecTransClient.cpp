@@ -3,20 +3,28 @@
 //
 
 #include "SecTransClient.h"
-#include "../lib/client.h"
-#include <iostream>
-#include "Message.h"
+
+SecTransClient::SecTransClient() {
+    startserver(CLIENT_PORT);
+}
+
+SecTransClient::~SecTransClient() throw() {
+    stopserver();
+}
 
 void SecTransClient::upload(const char *file) {
     std::string filename = file;
-    sndmsg(Message(UPLOAD, filename).toString(), 8080);
+    sndmsg(Message(UPLOAD, filename).toString(), SERVER_PORT);
 }
 
 void SecTransClient::download(const char *file) {
     std::string filename = file;
-    sndmsg(Message(DOWNLOAD, filename).toString(), 8080);
+    sndmsg(Message(DOWNLOAD, filename).toString(), SERVER_PORT);
 }
 
 void SecTransClient::list() {
-    sndmsg(Message(LIST, "").toString(), 8080);
+    sndmsg(Message(LIST, "").toString(), SERVER_PORT);
+    char msg[1024];
+    getmsg(msg);
+    std::cout << msg << std::endl;
 }
