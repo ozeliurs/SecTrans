@@ -28,6 +28,12 @@ bidirectionnal_client: build
 rsa: build
 	gcc -o build/rsa test/lib/rsa.c $(LIB_FLAGS) $(OPENSSL_FLAGS)
 
+secure_bi_client: build
+	gcc -o build/secure_bi_client test/lib/secure_bi_client.c $(LIB_FLAGS) $(OPENSSL_FLAGS)
+
+secure_bi_server: build
+	gcc -o build/secure_bi_server test/lib/secure_bi_server.c $(LIB_FLAGS) $(OPENSSL_FLAGS)
+
 run_simple_server: link simple_server
 	cd build && ./simple_server
 
@@ -45,6 +51,12 @@ run_bidirectionnal_server: link bidirectionnal_server
 
 run_bidirectionnal_client: link bidirectionnal_client
 	cd build && ./bidirectionnal_client
+
+run_secure_bi_client: link secure_bi_client
+	cd build && ./secure_bi_client
+
+run_secure_bi_server: link secure_bi_server
+	cd build && ./secure_bi_server
 
 run_rsa: link rsa
 	cd build && ./rsa
