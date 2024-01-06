@@ -12,17 +12,15 @@
 #include <unistd.h>
 #include "server.h"
 
-int MESSAGE_SIZE = 1024;
-
 /* read message sent by client */
 char* _get() {
     // Allocate memory for the message
-    char* msg = (char*)malloc(MESSAGE_SIZE);
+    char* msg = (char*)malloc(1024);
 
     int i = 0;
     while (1) {
         // Create a buffer to store the message chunk
-        char chunk[MESSAGE_SIZE];
+        char chunk[1024];
 
         // Get message chunk
         int result = getmsg(chunk);
@@ -34,7 +32,7 @@ char* _get() {
         }
 
         // Allocate memory for the new message
-        char* new_msg = (char*)malloc(i + MESSAGE_SIZE);
+        char* new_msg = (char*)malloc(i + 1024);
 
         // Check if error
         // TODO check memory allocation
@@ -50,17 +48,14 @@ char* _get() {
 
         // Copy chunk into msg until 1024 bytes or EOF
         int j = 0;
-        while (j < MESSAGE_SIZE && chunk[j] != '\0') {
+        while (j < 1024 && chunk[j] != '\0') {
             msg[i] = chunk[j];
             i++;
             j++;
         }
 
-        printf("Chunk Size: %d\n", j);
-
         // If chunk is not full, stop reading
-        if (j < (MESSAGE_SIZE - 1)) {
-            printf("Chunk is not full\n");
+        if (j < (1024 - 1)) {
             break;
         }
     }

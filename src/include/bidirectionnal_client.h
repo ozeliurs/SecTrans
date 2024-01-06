@@ -12,19 +12,19 @@ int CLIENT_PORT = 8080;
 int SERVER_PORT = 8081;
 
 int start() {
-    startserver(CLIENT_PORT);
+    return startserver(CLIENT_PORT);
 }
 
 int stop() {
-    stopserver();
+    return stopserver();
 }
 
-int send(char *msg) {
+int put(char *msg) {
     return _put(msg, SERVER_PORT);
 }
 
-char* receive() {
-    return get();
+char* get() {
+    return _get();
 }
 
 #endif //SECTRANS_BIDIRECTIONNAL_CLIENT_H

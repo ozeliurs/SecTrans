@@ -12,11 +12,11 @@ int CLIENT_PORT = 8080;
 int SERVER_PORT = 8081;
 
 int start() {
-    startserver(SERVER_PORT);
+    return startserver(SERVER_PORT);
 }
 
 int stop() {
-    stopserver();
+    return stopserver();
 }
 
 int put(char *msg) {
