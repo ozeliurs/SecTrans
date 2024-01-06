@@ -10,7 +10,7 @@
 int MESSAGE_SIZE = 1024;
 
 /* Sends chuncks of MESSAGE_SIZE bytes via client.h, chuncks are ETB(char 23) separated and finished with a EOF(char 0) */
-int put(char *msg, int port) {
+int _put(char *msg, int port) {
     // Send chunks of MESSAGE_SIZE bytes
     int i = 0;
 

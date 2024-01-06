@@ -7,7 +7,7 @@
 
 int main() {
     startserver(8080);
-    char* msg = get();
+    char* msg = _get();
     printf("Message from client: %s\n", msg);
     free(msg);
     stopserver();

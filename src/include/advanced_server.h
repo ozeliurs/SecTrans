@@ -15,7 +15,7 @@
 int MESSAGE_SIZE = 1024;
 
 /* read message sent by client */
-char* get() {
+char* _get() {
     // Allocate memory for the message
     char* msg = (char*)malloc(MESSAGE_SIZE);
 
