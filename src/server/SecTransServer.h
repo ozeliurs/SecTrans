@@ -5,7 +5,7 @@
 #ifndef SECTRANS_SECTRANSSERVER_H
 #define SECTRANS_SECTRANSSERVER_H
 
-#include "../lib/ultimateClient.h"
+#include "../include/ultimateClient.h"
 #include <iostream>
 
 

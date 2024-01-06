@@ -6,8 +6,8 @@
 #define SECTRANS_SECTRANSCLIENT_H
 
 #include <iostream>
-#include "../lib/ultimateClient.h"
-#include "../lib/ultimateServer.h"
+#include "../include/ultimateClient.h"
+#include "../include/ultimateServer.h"
 
 class SecTransClient {
 private:
