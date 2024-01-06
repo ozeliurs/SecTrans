@@ -1,7 +1,8 @@
 PWD = $(shell pwd)
 LIB_FLAGS = -Lsrc/lib -Isrc/include -lserver -lclient
+OPENSSL_FLAGS = -I/opt/homebrew/opt/openssl@3/include -L/opt/homebrew/opt/openssl@3/lib -lcrypto
 
-all: simple_server simple_client advanced_server advanced_client
+all: simple_server simple_client advanced_server advanced_client rsa
 
 build:
 	mkdir build
@@ -24,6 +25,9 @@ bidirectionnal_server: build
 bidirectionnal_client: build
 	gcc -o build/bidirectionnal_client test/lib/bidirectionnal_client.c $(LIB_FLAGS)
 
+rsa: build
+	gcc -o build/rsa test/lib/rsa.c $(LIB_FLAGS) $(OPENSSL_FLAGS)
+
 run_simple_server: link simple_server
 	cd build && ./simple_server
 
@@ -41,6 +45,9 @@ run_bidirectionnal_server: link bidirectionnal_server
 
 run_bidirectionnal_client: link bidirectionnal_client
 	cd build && ./bidirectionnal_client
+
+run_rsa: link rsa
+	cd build && ./rsa
 
 link: build
 	ln -sf $(PWD)/src/lib/libserver.so $(PWD)/build/libserver.so
