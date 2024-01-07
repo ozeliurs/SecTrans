@@ -7,81 +7,101 @@
 
 #include "rsa.h"
 #include "bidirectionnal_server.h"
+#include <openssl/dh.h>
+#include <openssl/aes.h>
+#include <openssl/rand.h>
 
-RSA *server_private_key = NULL;
-RSA *client_public_key = NULL;
+// Function to handle errors
+void handleErrors(void) {
+    fprintf(stderr, "Error occurred\n");
+    exit(EXIT_FAILURE);
+}
+
+AES_KEY aesKey;
 
 int secure_start() {
     // Start the server
-    int ret = start();
+    if (start() == -1) {
+        fprintf(stderr, "Failed to start the server.\n");
+        return -1;  // Return failure
+    }
 
-    // Generate RSA key pair
-    server_private_key = generateRSAKeyPair();
+    DH *alice_dh = DH_new();
+    if (!alice_dh) handleErrors();
 
-    // Wait for the public key from the client
-    char *clientPublicKeyStr = get();
+    // Generate parameters for Alice
+    if (1 != DH_generate_parameters_ex(alice_dh, 128, DH_GENERATOR_2, NULL)) handleErrors();
 
-    // Read the public key from the string
-    client_public_key = readPublicKeyFromStr(clientPublicKeyStr);
+    // Generate public and private keys for Alice
+    if (1 != DH_generate_key(alice_dh)) handleErrors();
 
-    // Free the string
-    free(clientPublicKeyStr);
+    // Convert Alice's public key to a string
+    unsigned char *alice_pub_key_str;
+    int alice_pub_key_len = i2d_DHparams(alice_dh, &alice_pub_key_str);
+    if (alice_pub_key_len <= 0) handleErrors();
 
-    // Get the public key string
-    char *publicKeyStr = getPublicKeyStr(server_private_key);
+    // Send Alice's public key to Bob
+    if (put((char *)alice_pub_key_str) != 0) handleErrors();
 
-    // Send the public key to the client
-    int sendResult = put(publicKeyStr);
+    // Receive Bob's public key
+    char *bob_pub_key_str = get();
 
-    // Free the string
-    free(publicKeyStr);
+    DH *bob_dh = DH_new();
+    if (!bob_dh) handleErrors();
 
-    return ret;
+    // Convert received public key string to DH structure
+    if (!d2i_DHparams(&bob_dh, (const unsigned char **)&bob_pub_key_str, strlen(bob_pub_key_str))) handleErrors();
+
+    // Generate public and private keys for Bob
+    if (1 != DH_generate_key(bob_dh)) handleErrors();
+
+    // Derive shared secret on Alice's side
+    unsigned char *alice_shared_secret = (unsigned char *)malloc(DH_size(alice_dh));
+    if (!alice_shared_secret) handleErrors();
+
+    int alice_shared_secret_len = DH_compute_key(alice_shared_secret, bob_dh->pub_key, alice_dh);
+    if (alice_shared_secret_len <= 0) handleErrors();
+
+    // Convert received shared secret string to binary
+    if (!d2i_DHparams(&bob_dh, (const unsigned char **)&bob_shared_secret_str, strlen(bob_shared_secret_str))) handleErrors();
+
+    // Print the shared secret
+    printf("Shared Secret: ");
+    for (int i = 0; i < alice_shared_secret_len; ++i) {
+        printf("%02x", alice_shared_secret[i]);
+    }
+    printf("\n");
+
+    // Use the shared secret for AES encryption and decryption
+    AES_KEY aesKey;
+    if (AES_set_encrypt_key(alice_shared_secret, 128, &aesKey) != 0) handleErrors();
+
+    const char *plaintext = "Hello, Bob! This is a secret message.";
+
+    // Encrypt the message
+    unsigned char ciphertext[AES_BLOCK_SIZE];
+    AES_encrypt((const unsigned char *)plaintext, ciphertext, &aesKey);
+
+    // Send the ciphertext to Bob
+    if (put((char *)ciphertext) != 0) handleErrors();
+
+    // Clean up
+    DH_free(alice_dh);
+    DH_free(bob_dh);
+    free(alice_shared_secret);
+    free(bob_shared_secret);
 }
 
 int secure_stop() {
-    // Free the RSA key pair
-    RSA_free(server_private_key);
-    RSA_free(client_public_key);
 
-    // Stop the server
-    return stop();
 }
 
 int secure_put(char *msg) {
-    // Encrypt the message
-    char *encryptedMessage;
-    int encryptResult = encryptMessage(msg, client_public_key, &encryptedMessage);
-    if (encryptResult == -1) {
-        fprintf(stderr, "Error encrypting message\n");
-        return -1;
-    }
 
-    // Send the encrypted message to the server
-    int sendResult = put(encryptedMessage);
-
-    // Free the encrypted message
-    free(encryptedMessage);
-
-    return sendResult;
 }
 
 char *secure_get() {
-    // Receive the encrypted message from the client
-    char *encryptedMessage = get();
 
-    // Decrypt the message
-    char *decryptedMessage;
-    int decryptResult = decryptMessage(encryptedMessage, server_private_key, &decryptedMessage);
-    if (decryptResult == -1) {
-        fprintf(stderr, "Error decrypting message\n");
-        return NULL;
-    }
-
-    // Free the encrypted message
-    free(encryptedMessage);
-
-    return decryptedMessage;
 }
 
 #endif //SECTRANS_SECURE_BI_SERVER_H

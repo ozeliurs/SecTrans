@@ -2,7 +2,7 @@ PWD = $(shell pwd)
 LIB_FLAGS = -Lsrc/lib -Isrc/include -lserver -lclient
 OPENSSL_FLAGS = -I/opt/homebrew/opt/openssl@3/include -L/opt/homebrew/opt/openssl@3/lib -lcrypto -Wno-deprecated-declarations
 
-all: simple_server simple_client advanced_server advanced_client rsa
+all: simple_server simple_client advanced_server advanced_client rsa secure_bi_client secure_bi_server
 
 build:
 	mkdir build
@@ -52,11 +52,11 @@ run_bidirectionnal_server: link bidirectionnal_server
 run_bidirectionnal_client: link bidirectionnal_client
 	cd build && ./bidirectionnal_client
 
-run_secure_bi_client: link secure_bi_client
-	cd build && ./secure_bi_client
-
 run_secure_bi_server: link secure_bi_server
 	cd build && ./secure_bi_server
+
+run_secure_bi_client: link secure_bi_client
+	cd build && ./secure_bi_client
 
 run_rsa: link rsa
 	cd build && ./rsa

@@ -34,6 +34,10 @@ int encryptMessage(const char *plainText, RSA *publicKey, char **encryptedText) 
     int result = RSA_public_encrypt(strlen(plainText), (const unsigned char *) plainText,
                                     (unsigned char *) *encryptedText, publicKey, RSA_PKCS1_OAEP_PADDING);
 
+    if (result == -1) {
+        fprintf(stderr, "Error encrypting message: %s\n", ERR_error_string(ERR_get_error(), NULL));
+    }
+
     return result;
 }
 
