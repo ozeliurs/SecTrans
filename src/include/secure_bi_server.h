@@ -5,11 +5,12 @@
 #ifndef SECTRANS_SECURE_BI_SERVER_H
 #define SECTRANS_SECURE_BI_SERVER_H
 
-#include "rsa.h"
-#include "bidirectionnal_server.h"
 #include <openssl/dh.h>
 #include <openssl/aes.h>
 #include <openssl/rand.h>
+#include "rsa.h"
+#include "bidirectionnal_server.h"
+
 
 // Function to handle errors
 void handleErrors(void) {
@@ -55,15 +56,20 @@ int secure_start() {
     // Generate public and private keys for Bob
     if (1 != DH_generate_key(bob_dh)) handleErrors();
 
-    // Derive shared secret on Alice's side
-    unsigned char *alice_shared_secret = (unsigned char *)malloc(DH_size(alice_dh));
-    if (!alice_shared_secret) handleErrors();
+	// Derive shared secret on Alice's side
+	unsigned char *alice_shared_secret = (unsigned char *)malloc(DH_size(alice_dh));
+	if (!alice_shared_secret) handleErrors();
 
-    int alice_shared_secret_len = DH_compute_key(alice_shared_secret, bob_dh->pub_key, alice_dh);
-    if (alice_shared_secret_len <= 0) handleErrors();
+	int alice_shared_secret_len = DH_compute_key(alice_shared_secret, bob_dh->pub_key, alice_dh);
+	if (alice_shared_secret_len <= 0) handleErrors();
 
-    // Convert received shared secret string to binary
-    if (!d2i_DHparams(&bob_dh, (const unsigned char **)&bob_shared_secret_str, strlen(bob_shared_secret_str))) handleErrors();
+	// Allocate memory for bob_shared_secret_str and bob_shared_secret
+	unsigned char *bob_shared_secret_str = (unsigned char *)malloc(DH_size(bob_dh));
+	unsigned char *bob_shared_secret = (unsigned char *)malloc(DH_size(bob_dh));
+	if (!bob_shared_secret_str || !bob_shared_secret) handleErrors();
+
+	// Convert received shared secret string to binary
+	if (!d2i_DHparams(&bob_dh, (const unsigned char **)&bob_shared_secret_str, strlen(bob_shared_secret_str))) handleErrors();
 
     // Print the shared secret
     printf("Shared Secret: ");
