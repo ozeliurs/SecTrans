@@ -14,6 +14,35 @@ on the threat model that you also have to establish. Such countermeasures typica
 control and cryptography. The threat model will investigate security and privacy threats to the
 application and will also have to be documented.*
 
+## 0. Threat Model
+
+Before we can start designing the system architecture and the security architecture, we need to establish a threat model.
+The threat model will help us identify the threats to the system and the assets that need to be protected.
+
+### 0.1. Unauthorized access to the system.
+
+Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access.
+
+On the server, we will store the files with permissions that will only allow the server to access them.
+We will also store the files encrypted at rest, thus even if an attacker manages to access the files, he won't be able to read them.
+When transferring the files from the client to the server, we will encrypt the connection between the client and the server, thus even if an attacker manages to intercept the files, he won't be able to read them.
+
+This allows us to protect the files from the moment they leave the client until the moment they are stored on the server.
+
+### 0.2. Remote Code Execution.
+
+The server will be running on a remote machine, thus the need to protect it from remote code execution.
+
+We will reduce the risk of remote code execution by using UNIX bindings and never calling `eval` or `exec` at all.
+
+### 0.3. 
+
+- Remote code execution.
+    The server will be running on a remote machine, thus the need to protect it from remote code execution. We could reduce the risk of remote code execution by running the server as a non-root user and by running it in a container.
+- Data breaches.
+    The server will be storing potentially sensitive data, thus the need to protect it from data breaches. We could reduce the risk of data breaches by encrypting the data at rest and by encrypting the connection between the client and the server.
+
+
 ## 1. System Architecture
 
 The system architecture is based on a client-server model. 
@@ -50,7 +79,8 @@ Here is an example of a communication between the client and the server for a fi
 We have noted 3 major threats to the system:
 
 - Unauthorized access to the system.
-    Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access. We will concentrate on protecting the files from being accessed by unauthorized users as a server but will rely on the unix permissions to protect the files from being accessed by unauthorized users as a process.
+    Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access. We will concentrate on protecting the files from being accessed by unauthorized users as a server but will rely on the unix permissions to protect the files from being accessed by unauthorized users as a process. - Data interception.
+Sensitive data transferred between the client and server may be intercepted by malicious actors during transmission.
 - Remote code execution.
     The server will be running on a remote machine, thus the need to protect it from remote code execution. We could reduce the risk of remote code execution by running the server as a non-root user and by running it in a container.
 - Data breaches.
@@ -76,3 +106,6 @@ We will implement a logging system that will log all the actions performed by th
 
 Both Client and Server will use a cryptographic module that will implement the cryptographic measures described above.
 The Server will also use a sqlite database to store the metadata about the files and the users.
+
+
+tkt c safe
