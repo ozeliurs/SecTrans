@@ -1,5 +1,6 @@
 ---
 title: Specification Phase
+authors: Maxime BILLY, Timothée JUILLET, Loïc PANTANO
 ---
 
 *This part of the work will first require you to determine the system architecture as well as the security
@@ -35,77 +36,110 @@ The server will be running on a remote machine, thus the need to protect it from
 
 We will reduce the risk of remote code execution by using UNIX bindings and never calling `eval` or `exec` at all.
 
-### 0.3. 
+### 0.3. Data interception
 
-- Remote code execution.
-    The server will be running on a remote machine, thus the need to protect it from remote code execution. We could reduce the risk of remote code execution by running the server as a non-root user and by running it in a container.
-- Data breaches.
-    The server will be storing potentially sensitive data, thus the need to protect it from data breaches. We could reduce the risk of data breaches by encrypting the data at rest and by encrypting the connection between the client and the server.
+Sensitive data transferred between the client and server may be intercepted by malicious actors during transmission.
 
+We will mitigate this threat by using a secure communication protocols to encrypt data in transit and protect it from interception.
+
+### 0.4. Denial of service
+
+Attackers may flood the server with requests, overwhelming its resources and causing it to become unavailable.
+
+We can prevent this type of attack by monitoring and filtering requests to mitigate the impact of DoS attacks.
 
 ## 1. System Architecture
 
-The system architecture is based on a client-server model. 
+The system architecture is based on a client-server model.
 We have noted in the requirements that the client can connect from "Home", that means communication between the client and the server will be done over potentially insecure networks, thus the need to encrypt our communications.
 
 ### 1.1. Client
 
-The client will have 4 major components:
+The client will have two major components:
 
 - A CLI (Command Line Interface) that will allow the user to interact with the system.
-- A File Management Library that will allow the client to upload, download, delete and list files on the server.
-- A cryptographic module that will allow the client to encrypt and decrypt the files, authenticate the users and encrypt the connection between the client and the server.
 - The Microhard library that will allow the client to communicate with the server.
 
 ### 1.2. Server
 
-The server will have 4 major components:
+The server will have one major components:
 
-- A REST API that will allow the client to communicate with the server.
 - The Microhard library that will allow the server to communicate with the client.
-- A database that will store metadata about the files and the users.
-- A cryptographic module that will allow the server to encrypt and decrypt the files, authenticate the users and encrypt the connection between the client and the server.
 
-### 1.3. Communication
+### 1.3. Shared Ressources
+
+Both Server and Clients have access to the wrapped libraries provided by Microhard, they mitigate the risk of buffer overflow and are much more flexible than the provided ones.
+
+### 1.4. Communication
 
 Here is an example of a communication between the client and the server for a file upload:
 
-![Communication Diagram](./assets/communication-diagram.svg)
+![Upload](./assets/upload.svg)
+
+This is how a download works:
+
+![Download](./assets/download.svg)
+
+And this is the way it lists files on the server:
+
+![List](./assets/list.svg)
 
 ## 2. Security Architecture:
 
-2.1 Threat Model:
+### 2.1 Remote Code Execution (RCE)
 
-We have noted 3 major threats to the system:
+To harden our executable from RCEs, we used only the MicroHard and OpenSSL libraries and never called external executables.
 
-- Unauthorized access to the system.
-    Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access. We will concentrate on protecting the files from being accessed by unauthorized users as a server but will rely on the unix permissions to protect the files from being accessed by unauthorized users as a process. - Data interception.
-Sensitive data transferred between the client and server may be intercepted by malicious actors during transmission.
-- Remote code execution.
-    The server will be running on a remote machine, thus the need to protect it from remote code execution. We could reduce the risk of remote code execution by running the server as a non-root user and by running it in a container.
-- Data breaches.
-    The server will be storing potentially sensitive data, thus the need to protect it from data breaches. We could reduce the risk of data breaches by encrypting the data at rest and by encrypting the connection between the client and the server.
+We sanitize user input and communications between clients and servers.
 
-2.2 Access Control:
+### 2.2 Encoding
 
-The access control will be very simple as this is a small project, I will only implement 2 roles:
-- Authenticated User: The authenticated user will be able to read, create, update and delete files.
-- Anonymous User: The anonymous user won't be able to read, create, update or delete files.
+Using Base64 encoding during file transfer can enhance the safety of your data in several ways. Base64 encoding converts binary data into ASCII characters, making it more resilient to potential issues during transmission, such as character set mismatches or special character handling in different systems. Additionally, Base64 encoding helps prevent data corruption that may occur when transferring binary files through protocols that are not binary-safe.
 
-2.3 Cryptographic Measures:
-To ensure data confidentiality, integrity and authenticity, I will use the following cryptographic measures:
+Moreover, Base64 encoding serves as a form of data obfuscation. Since the encoded data is a string of alphanumeric characters, it reduces the risk of unintended interpretation or manipulation by systems or protocols that may mishandle binary content. This adds a layer of security by making it less likely for malicious entities to tamper with the data during transit.
 
-- Encryption of the connection between the client and the server using a cryptographic protocol.
-- Storage of files hashed with a cryptographic hash function in the database.
-- Encryption of the files at rest using a cryptographic protocol.
+Furthermore, some file transfer mechanisms or platforms may have restrictions on certain types of binary data. Using Base64 encoding allows you to bypass such limitations, ensuring a smoother and more reliable transfer process. Overall, incorporating Base64 encoding in your file transfer protocol contributes to the integrity and security of your data, minimizing potential risks associated with various transfer environments.
 
-2.4 Security Monitoring and Logging:
-We will implement a logging system that will log all the actions performed by the users. This will allow us to monitor the system and to detect suspicious activities.
+### 2.3 Static Code Analysis
 
-## 3. Integration of Security Measures:
+Early in the development stage, we included static code analysis for all of our codebase to detect bad practises, security hotspots and potential vulnerabilities.
 
-Both Client and Server will use a cryptographic module that will implement the cryptographic measures described above.
-The Server will also use a sqlite database to store the metadata about the files and the users.
+It is done with SonarQube and it has allowed us to review some hotspots and asses the risks.
 
+![Sonarqube](./assets/sonarqube.png)
 
-tkt c safe
+*Due to the limited development time, loads of the security measures we planned to implement were not in favor of the main specifications of the application.*
+
+## 3. Security Assessment
+
+### 3.1 Microhard's Library Analysis
+
+We used IDA64 to first reverse engineer the source code behind MicroHard's libraries. This has allowed us two things.
+
+First, this allowed us to crosscompile these libs with arm64 to allow us to develop on new M1 macs, which was impossible with the amd64 compiled libs.
+
+Second, it has allowed us to run SonarQube on the source code, highliting security hotspots and vulnerabilities that were mitigated in the client and server.
+
+### 3.2 Fuzzing
+
+We used a very simple technic to test fuzzing the communications between client and server.
+
+```bash
+exec 3<>/dev/tcp/127.0.0.1/8080 # Opens the server's Socket
+cat /dev/random >&3 # Sends random bytes in the socket
+```
+
+Then we used the fuzzing we've seen during class to test the parsing of our arguments.
+
+```bash
+zzuf ./client -up file
+zzuf ./client -list
+```
+
+These attacks, although very simple, were unable to break our program, wich exited before showing any security weaknesses.
+
+## 4. Conclusion
+
+This program, used with a ssh tunnel, is a secure way of accessing files over the internet.
+
+It is difficult to justify the need for another tool using proprietary libraries from MicroHard when open source, well tested alternatives such as `scp` and `rsync` exist.
