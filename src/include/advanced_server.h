@@ -32,23 +32,8 @@ char* _get() {
             exit(1);
         }
 
-        // Allocate memory for the new message
-        char* new_msg = (char*)malloc(i + 1024);
-
-        // Check if error
-        // TODO check memory allocation
-        if (new_msg == NULL){
-            fprintf(stderr, "Error: Memory allocation failed\n");
-            exit(1);
-        }
-        // Copy old message into new message
-        strcpy(new_msg, msg);
-
-        // Free old message
-        free(msg);
-
-        // Set new message
-        msg = new_msg;
+        // Use realloc to increase the size of the message
+        msg = (char*)realloc(msg, i + 1024);
 
         // Copy chunk into msg until 1024 bytes or EOF
         int j = 0;

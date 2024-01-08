@@ -68,7 +68,7 @@ int upload(char *filepath) {
 
     // Check if the file was opened successfully
     if (file == NULL) {
-        printf("Error opening the file.\n");
+        printf("Error opening the file at %s\n", filepath);
         return 1; // Return an error code
     }
 

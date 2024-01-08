@@ -15,7 +15,7 @@ run_client_list: client
 	cd build && ./client -list
 
 run_client_get: client
-	cd build && ./client -up libserver.so
+	cd build && echo "pipi" > ./pipi && ./client -up ./pipi
 
 run_server: server
 	cd build && mkdir -p storage && touch storage/caca && ./server

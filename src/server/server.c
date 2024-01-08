@@ -10,8 +10,35 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
 
 DIR *dir = NULL;
+
+// TODO  put in a header file
+char *base64_decode(const char *encoded_data) {
+    BIO *bio, *b64;
+    size_t len = strlen(encoded_data);
+    char *decoded_data = (char *)malloc(len);  // Allocate memory for the decoded data
+    if (!decoded_data) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    b64 = BIO_new(BIO_f_base64());  // Create a base64 filter
+    bio = BIO_new_mem_buf(encoded_data, -1);  // Create a memory buffer BIO
+
+    // Link the BIOs
+    bio = BIO_push(b64, bio);
+
+    // Decode the data
+    BIO_read(bio, decoded_data, len);
+
+    // Cleanup
+    BIO_free_all(bio);
+
+    return decoded_data;
+}
 
 char* list() {
     // List all files in the storage directory TODO: recursively
@@ -83,8 +110,11 @@ int upload(char *contents) {
         return 1;
     }
 
+    // Decode file contents
+    char *decodedFileContents = base64_decode(filecontents);
+
     // Write file
-    fwrite(filecontents, sizeof(char), strlen(filecontents), file);
+    fwrite(decodedFileContents, sizeof(char), strlen(decodedFileContents), file);
 
     // Close file
     fclose(file);
