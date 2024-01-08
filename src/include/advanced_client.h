@@ -8,7 +8,7 @@
 #include "client.h"
 #include <stdio.h>
 
-/* Sends chuncks of 1024 bytes via client.h, chuncks are ETB(char 23) separated and finished with a EOF(char 0) */
+/* Sends chuncks of 1024 bytes via client.h and finished with a EOF(char 0) */
 int _put(char *msg, int port) {
     // Send chunks of 1024 bytes
     int i = 0;

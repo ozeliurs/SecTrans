@@ -2,10 +2,15 @@ PWD = $(shell pwd)
 LIB_FLAGS = -Lsrc/lib -Isrc/include -lserver -lclient
 OPENSSL_FLAGS = -I/opt/homebrew/opt/openssl@3/include -L/opt/homebrew/opt/openssl@3/lib -lcrypto -Wno-deprecated-declarations
 
-all: simple_server simple_client advanced_server advanced_client rsa secure_bi_client secure_bi_server
+all:
+	echo "TODO"
 
-build:
-	mkdir build
+# Main
+client: build src/client/client.c link
+	gcc -o build/client src/client/client.c $(LIB_FLAGS) $(OPENSSL_FLAGS)
+
+
+# Tests
 
 simple_server: build
 	gcc -o build/simple_server test/lib/simple_server.c $(LIB_FLAGS)
@@ -61,11 +66,14 @@ run_secure_bi_client: link secure_bi_client
 run_rsa: link rsa
 	cd build && ./rsa
 
+# Utils
+
+build:
+	mkdir build
+
 link: build
 	ln -sf $(PWD)/src/lib/libserver.so $(PWD)/build/libserver.so
 	ln -sf $(PWD)/src/lib/libclient.so $(PWD)/build/libclient.so
 
 clean:
 	rm -fr /tmp/crappy_sockets_*.sock build/*
-
-test: ultimate simple_server simple_client
