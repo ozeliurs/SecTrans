@@ -74,15 +74,15 @@ Both Server and Clients have access to the wrapped libraries provided by Microha
 
 Here is an example of a communication between the client and the server for a file upload:
 
-![Upload](./assets/upload.svg)
+![Upload](doc/assets/upload.svg)
 
 This is how a download works:
 
-![Download](./assets/download.svg)
+![Download](doc/assets/download.svg)
 
 And this is the way it lists files on the server:
 
-![List](./assets/list.svg)
+![List](doc/assets/list.svg)
 
 ## 2. Security Architecture:
 
@@ -106,7 +106,7 @@ Early in the development stage, we included static code analysis for all of our 
 
 It is done with SonarQube and it has allowed us to review some hotspots and asses the risks.
 
-![Sonarqube](./assets/sonarqube.png)
+![Sonarqube](doc/assets/sonarqube.png)
 
 *Due to the limited development time, loads of the security measures we planned to implement were not in favor of the main specifications of the application.*
 
