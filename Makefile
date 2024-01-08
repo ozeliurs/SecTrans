@@ -5,7 +5,7 @@ OPENSSL_FLAGS = -I/opt/homebrew/opt/openssl@3/include -L/opt/homebrew/opt/openss
 compile_libs: libclient libserver all
 
 libclient:
-	gcc -fPIC -shared -o build/libclient.so -fPIC src/lib/client.c
+	pwd && gcc -fPIC -shared -o build/libclient.so -fPIC src/lib/client.c
 
 libserver:
 	gcc -fPIC -shared -o build/libserver.so -fPIC src/lib/server.c
