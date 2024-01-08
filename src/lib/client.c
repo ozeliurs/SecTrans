@@ -52,3 +52,16 @@ int sndmsg(char msg[1024], int port)
         return -1;
     }
 }
+
+int main()
+{
+    char msg_to_send[] = "Hello, Server!";
+    int result = sndmsg(msg_to_send, 8080);
+    if ( result != 0 )
+    {
+        fprintf(stderr, "Failed to send message to the server\n");
+        return 1;
+    }
+    printf("Message sent to the server: %s\n", msg_to_send);
+    return 0;
+}

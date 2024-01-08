@@ -84,3 +84,22 @@ int stopserver()
     close(server_fd);
     return 0;
 }
+
+int main()
+{
+    int port = 8080;
+    startserver(port);
+    printf("Server started on port %d\n", port);
+    char msg_read[1024];
+    int bytesRead = getmsg(msg_read);
+    if ( bytesRead < 0 )
+    {
+        fprintf(stderr, "Failed to read message from client\n");
+        stopserver();
+        return 1;
+    }
+    printf("Message from client: %s\n", msg_read);
+    stopserver();
+    printf("Server stopped\n");
+    return 0;
+}
