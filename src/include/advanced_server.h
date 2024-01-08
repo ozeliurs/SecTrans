@@ -15,6 +15,7 @@
 /* read message sent by client */
 char* _get() {
     // Allocate memory for the message
+
     char* msg = (char*)malloc(1024);
 
     int i = 0;
@@ -36,7 +37,10 @@ char* _get() {
 
         // Check if error
         // TODO check memory allocation
-
+        if (new_msg == NULL){
+            fprintf(stderr, "Error: Memory allocation failed\n");
+            exit(1);
+        }
         // Copy old message into new message
         strcpy(new_msg, msg);
 

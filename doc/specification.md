@@ -17,14 +17,14 @@ application and will also have to be documented.*
 ## 1. System Architecture
 
 The system architecture is based on a client-server model. 
-I have noted in the requirements that the client can connect from "Home", that means communication between the client and the server will be done over potentially insecure networks, thus the need to encrypt our communications.
+We have noted in the requirements that the client can connect from "Home", that means communication between the client and the server will be done over potentially insecure networks, thus the need to encrypt our communications.
 
 ### 1.1. Client
 
 The client will have 4 major components:
 
 - A CLI (Command Line Interface) that will allow the user to interact with the system.
-- A File Management Library that will allow the client to upload, download, delete and list files.
+- A File Management Library that will allow the client to upload, download, delete and list files on the server.
 - A cryptographic module that will allow the client to encrypt and decrypt the files, authenticate the users and encrypt the connection between the client and the server.
 - The Microhard library that will allow the client to communicate with the server.
 
@@ -47,10 +47,10 @@ Here is an example of a communication between the client and the server for a fi
 
 2.1 Threat Model:
 
-I have noted 3 major threats to the system:
+We have noted 3 major threats to the system:
 
 - Unauthorized access to the system.
-    Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access. I will concentrate on protecting the files from being accessed by unauthorized users as a server but will rely on the unix permissions to protect the files from being accessed by unauthorized users as a process.
+    Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access. We will concentrate on protecting the files from being accessed by unauthorized users as a server but will rely on the unix permissions to protect the files from being accessed by unauthorized users as a process.
 - Remote code execution.
     The server will be running on a remote machine, thus the need to protect it from remote code execution. We could reduce the risk of remote code execution by running the server as a non-root user and by running it in a container.
 - Data breaches.
@@ -70,7 +70,7 @@ To ensure data confidentiality, integrity and authenticity, I will use the follo
 - Encryption of the files at rest using a cryptographic protocol.
 
 2.4 Security Monitoring and Logging:
-I will implement a logging system that will log all the actions performed by the users. This will allow us to monitor the system and to detect suspicious activities.
+We will implement a logging system that will log all the actions performed by the users. This will allow us to monitor the system and to detect suspicious activities.
 
 ## 3. Integration of Security Measures:
 
