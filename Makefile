@@ -2,7 +2,7 @@ PWD = $(shell pwd)
 LIB_FLAGS = -Lsrc/lib -Isrc/include -lserver -lclient
 OPENSSL_FLAGS = -I/opt/homebrew/opt/openssl@3/include -L/opt/homebrew/opt/openssl@3/lib -lcrypto -Wno-deprecated-declarations
 
-compile_libs: libclient libserver prod
+compile_libs: libclient libserver
 
 libclient:
 	gcc -fPIC -shared -o build/libclient.so -fPIC src/lib/client.c
