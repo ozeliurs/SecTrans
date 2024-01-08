@@ -13,8 +13,6 @@ int _put(char *msg, int port) {
     // Send chunks of 1024 bytes
     int i = 0;
 
-    printf("Sending message: %s\n", msg);
-
     while (msg[i] != '\0') {
         // Create chunk
         char chunk[1024];

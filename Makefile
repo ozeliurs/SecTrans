@@ -11,6 +11,17 @@ client: build src/client/client.c link
 server: build src/server/server.c link
 	gcc -o build/server src/server/server.c $(LIB_FLAGS) $(OPENSSL_FLAGS)
 
+run_client_list: client
+	cd build && ./client -list
+
+run_client_get: client
+	cd build && ./client -up libserver.so
+
+run_server: server
+	cd build && mkdir -p storage && touch storage/caca && ./server
+
+clear: clean
+
 # Tests
 
 simple_server: build

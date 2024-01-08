@@ -12,18 +12,22 @@ int CLIENT_PORT = 8080;
 int SERVER_PORT = 8081;
 
 int start() {
+    printf("Client has started.\n");
     return startserver(CLIENT_PORT);
 }
 
 int stop() {
+    printf("Client has stopped.\n");
     return stopserver();
 }
 
 int put(char *msg) {
+    printf("Client has put.\n");
     return _put(msg, SERVER_PORT);
 }
 
 char* get() {
+    printf("Client has get.\n");
     return _get();
 }
 

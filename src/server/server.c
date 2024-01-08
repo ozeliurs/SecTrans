@@ -13,8 +13,9 @@
 
 DIR *dir = NULL;
 
-int list() {
-    // List all files in the storage directory
+char* list() {
+    // List all files in the storage directory TODO: recursively
+    printf("Listing files...\n");
     struct dirent *ent;
     char *list = (char *) malloc(1024 * sizeof(char));
     list[0] = '\0';
@@ -25,6 +26,11 @@ int list() {
             strcat(list, "\n");
         }
     }
+
+    // Null terminate the string
+    list[strlen(list) - 1] = '\0';
+
+    printf("List: %s\n", list);
 
     return list;
 }
@@ -58,11 +64,13 @@ int download(char *filename) {
 
 int upload(char *contents) {
     // Find char(31) in contents and split the string in 2
-    char *separator = (char *) malloc(2 * sizeof(char));
-    separator[0] = 31;
-    separator[1] = '\0';
+    printf("Upload");
+    char *separator = "\x1F";
     char *filename = strtok(contents, separator);
     char *filecontents = strtok(NULL, separator);
+
+    printf("filename: %s\n", filename);
+    printf("filecontents: %s\n", filecontents);
 
     // Open file
     char *filepath = (char *) malloc((strlen(filename) + 10) * sizeof(char));
@@ -116,6 +124,7 @@ int main() {
         // If action is LS, call list
         if (strcmp(action, "LS") == 0) {
             char* list_str = list();
+            printf("list_str: %s\n", list_str);
             put(list_str);
             free(list_str);
         }
@@ -137,8 +146,5 @@ int main() {
             strncpy(contents, msg + 3, strlen(msg) - 2);
             upload(contents);
         }
-
-        // Send message to client
-        put(msg);
     }
 }

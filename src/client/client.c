@@ -61,8 +61,7 @@ int upload(char *filepath) {
     /* Sends UP and the full filepath and then the file content in base64 separated by char 31 */
     start();
 
-    char separator[1];
-    separator[0] = 31;
+    char* separator = "\x1F";
 
     // Open the file in read mode
     FILE *file = fopen(filepath, "r");
