@@ -19,24 +19,22 @@ jobs:
         run: sudo apt-get install gcc
 
       - name: Compile server
-        working-directory: ./src/server
         run: make
 
       - name: Upload server
         uses: actions/upload-artifact@v2
         with:
           name: server
-          path: ./src/server/server
+          path: ./build/server
 
       - name: Compile client
-        working-directory: ./src/client
         run: make
 
       - name: Upload client
         uses: actions/upload-artifact@v2
         with:
           name: client
-          path: ./src/client/client
+          path: ./build/client
 
   generate-pdf:
     runs-on: ubuntu-latest

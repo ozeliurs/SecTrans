@@ -1,5 +1,6 @@
 ---
 title: Specification Phase
+authors: Maxime BILLY, Timothée JUILLET, Loïc PANTANO
 ---
 
 *This part of the work will first require you to determine the system architecture as well as the security
@@ -14,62 +15,131 @@ on the threat model that you also have to establish. Such countermeasures typica
 control and cryptography. The threat model will investigate security and privacy threats to the
 application and will also have to be documented.*
 
-## 1. System Architecture:
+## 0. Threat Model
 
-1.1 Overview:
-Define the overall structure of the system, emphasizing the client-server communication aspect. This should include a brief description of the major components, their roles, and how they interact.
+Before we can start designing the system architecture and the security architecture, we need to establish a threat model.
+The threat model will help us identify the threats to the system and the assets that need to be protected.
 
-1.2 Integration of Macrohard Corporation's Library:
-Incorporate the selected client-server communications library from Macrohard Corporation into the system architecture. Clearly define how this library will be utilized for data transfers and identify any potential limitations or constraints imposed by the library.
+### 0.1. Unauthorized access to the system.
 
-1.3 System Components:
-Identify and describe key system components, such as clients, servers, databases, and any other relevant components. Specify their functionalities and interactions.
+Potentially sensitive files could be stored on the server, thus the need to protect them from unauthorized access.
 
-1.4 Data Flow and Communication:
-Illustrate the flow of data between different components, emphasizing the communication pathways facilitated by the Macrohard library. This should cover data transfer protocols, message formats, and any other relevant communication details.
+On the server, we will store the files with permissions that will only allow the server to access them.
+We will also store the files encrypted at rest, thus even if an attacker manages to access the files, he won't be able to read them.
+When transferring the files from the client to the server, we will encrypt the connection between the client and the server, thus even if an attacker manages to intercept the files, he won't be able to read them.
+
+This allows us to protect the files from the moment they leave the client until the moment they are stored on the server.
+
+### 0.2. Remote Code Execution.
+
+The server will be running on a remote machine, thus the need to protect it from remote code execution.
+
+We will reduce the risk of remote code execution by using UNIX bindings and never calling `eval` or `exec` at all.
+
+### 0.3. Data interception
+
+Sensitive data transferred between the client and server may be intercepted by malicious actors during transmission.
+
+We will mitigate this threat by using a secure communication protocols to encrypt data in transit and protect it from interception.
+
+### 0.4. Denial of service
+
+Attackers may flood the server with requests, overwhelming its resources and causing it to become unavailable.
+
+We can prevent this type of attack by monitoring and filtering requests to mitigate the impact of DoS attacks.
+
+## 1. System Architecture
+
+The system architecture is based on a client-server model.
+We have noted in the requirements that the client can connect from "Home", that means communication between the client and the server will be done over potentially insecure networks, thus the need to encrypt our communications.
+
+### 1.1. Client
+
+The client will have two major components:
+
+- A CLI (Command Line Interface) that will allow the user to interact with the system.
+- The Microhard library that will allow the client to communicate with the server.
+
+### 1.2. Server
+
+The server will have one major components:
+
+- The Microhard library that will allow the server to communicate with the client.
+
+### 1.3. Shared Ressources
+
+Both Server and Clients have access to the wrapped libraries provided by Microhard, they mitigate the risk of buffer overflow and are much more flexible than the provided ones.
+
+### 1.4. Communication
+
+Here is an example of a communication between the client and the server for a file upload:
+
+![Upload](./assets/upload.svg)
+
+This is how a download works:
+
+![Download](./assets/download.svg)
+
+And this is the way it lists files on the server:
+
+![List](./assets/list.svg)
 
 ## 2. Security Architecture:
 
-2.1 Threat Model:
-Define a comprehensive threat model by identifying potential security and privacy threats to the application. Consider external and internal threats, including unauthorized access, data breaches, and privacy violations. Document these threats and their potential impact.
+### 2.1 Remote Code Execution (RCE)
 
-2.2 Access Control:
-Implement access control mechanisms to mitigate unauthorized access. Define user roles and privileges, and enforce access controls at various levels within the system. This could include user authentication, authorization, and session management.
+To harden our executable from RCEs, we used only the MicroHard and OpenSSL libraries and never called external executables.
 
-2.3 Cryptographic Measures:
-Incorporate cryptographic measures to ensure data confidentiality, integrity, and authenticity. Implement encryption for data in transit and at rest. Utilize secure key management practices to protect cryptographic keys.
+We sanitize user input and communications between clients and servers.
 
-2.4 Security Monitoring and Logging:
-Integrate a robust security monitoring system to detect and respond to security incidents promptly. Implement comprehensive logging to track system activities and potential security events.
+### 2.2 Encoding
 
-2.5 Regular Security Audits and Assessments:
-Establish a routine schedule for security audits and assessments to identify and address vulnerabilities. This includes penetration testing, code reviews, and security assessments of third-party components.
+Using Base64 encoding during file transfer can enhance the safety of your data in several ways. Base64 encoding converts binary data into ASCII characters, making it more resilient to potential issues during transmission, such as character set mismatches or special character handling in different systems. Additionally, Base64 encoding helps prevent data corruption that may occur when transferring binary files through protocols that are not binary-safe.
 
-2.6 Incident Response Plan:
-Develop a detailed incident response plan to address security incidents effectively. Define roles and responsibilities, incident detection and reporting procedures, and recovery processes.
+Moreover, Base64 encoding serves as a form of data obfuscation. Since the encoded data is a string of alphanumeric characters, it reduces the risk of unintended interpretation or manipulation by systems or protocols that may mishandle binary content. This adds a layer of security by making it less likely for malicious entities to tamper with the data during transit.
 
-2.7 Compliance Measures:
-Ensure that the security architecture aligns with relevant industry regulations and standards. This may include GDPR, HIPAA, or other applicable standards based on the nature of the application and data processed.
+Furthermore, some file transfer mechanisms or platforms may have restrictions on certain types of binary data. Using Base64 encoding allows you to bypass such limitations, ensuring a smoother and more reliable transfer process. Overall, incorporating Base64 encoding in your file transfer protocol contributes to the integrity and security of your data, minimizing potential risks associated with various transfer environments.
 
-## 3. Integration of Security Measures:
+### 2.3 Static Code Analysis
 
-3.1 Incorporating Security into System Components:
-Specify how each system component will integrate the defined security measures. This includes modifying existing components or introducing new ones to enhance security.
+Early in the development stage, we included static code analysis for all of our codebase to detect bad practises, security hotspots and potential vulnerabilities.
 
-3.2 Testing and Validation:
-Establish a comprehensive testing plan to validate the effectiveness of security measures. This should include unit testing, integration testing, and end-to-end security testing.
+It is done with SonarQube and it has allowed us to review some hotspots and asses the risks.
 
-3.3 Documentation:
-Document the security architecture, including access control policies, cryptographic protocols, and incident response procedures. This documentation should serve as a reference for developers, administrators, and auditors.
+![Sonarqube](./assets/sonarqube.png)
 
-## 4. Ongoing Maintenance and Improvement:
+*Due to the limited development time, loads of the security measures we planned to implement were not in favor of the main specifications of the application.*
 
-4.1 Continuous Monitoring:
-Implement continuous monitoring of the system's security posture. Use tools and processes to identify and respond to emerging threats and vulnerabilities.
+## 3. Security Assessment
 
-4.2 Periodic Review and Updates:
-Regularly review and update the security architecture based on changes in the threat landscape, system requirements, or technology advancements.
+### 3.1 Microhard's Library Analysis
 
-4.3 Employee Training:
-Conduct regular training sessions for employees to raise awareness of security best practices and ensure adherence to security policies.
+We used IDA64 to first reverse engineer the source code behind MicroHard's libraries. This has allowed us two things.
 
+First, this allowed us to crosscompile these libs with arm64 to allow us to develop on new M1 macs, which was impossible with the amd64 compiled libs.
+
+Second, it has allowed us to run SonarQube on the source code, highliting security hotspots and vulnerabilities that were mitigated in the client and server.
+
+### 3.2 Fuzzing
+
+We used a very simple technic to test fuzzing the communications between client and server.
+
+```bash
+exec 3<>/dev/tcp/127.0.0.1/8080 # Opens the server's Socket
+cat /dev/random >&3 # Sends random bytes in the socket
+```
+
+Then we used the fuzzing we've seen during class to test the parsing of our arguments.
+
+```bash
+zzuf ./client -up file
+zzuf ./client -list
+```
+
+These attacks, although very simple, were unable to break our program, wich exited before showing any security weaknesses.
+
+## 4. Conclusion
+
+This program, used with a ssh tunnel, is a secure way of accessing files over the internet.
+
+It is difficult to justify the need for another tool using proprietary libraries from MicroHard when open source, well tested alternatives such as `scp` and `rsync` exist.
