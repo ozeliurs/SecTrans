@@ -15,39 +15,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "../include/bidirectionnal_client.h"
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/evp.h>
+#include "../include/base64.h"
 #include <stdio.h>
 #include <dirent.h>
-
-// TODO put in a header file
-char *base64_encode(const unsigned char *input, size_t length) {
-    BIO *bio, *b64;
-    BUF_MEM *bufferPtr;
-
-    // Create a base64 filter/sink BIO
-    b64 = BIO_new(BIO_f_base64());
-    bio = BIO_new(BIO_s_mem());
-    bio = BIO_push(b64, bio);
-
-    // Write the data to the BIO
-    BIO_write(bio, input, length);
-    BIO_flush(bio);
-
-    // Get the pointer to the BIO's memory buffer
-    BIO_get_mem_ptr(bio, &bufferPtr);
-
-    // Allocate memory for the base64 encoded string and null terminate it
-    char *encodedMsg = (char *)malloc(bufferPtr->length + 1);
-    memcpy(encodedMsg, bufferPtr->data, bufferPtr->length);
-    encodedMsg[bufferPtr->length] = '\0';
-
-    // Clean up
-    BIO_free_all(bio);
-
-    return encodedMsg;
-}
 
 void usage() {
     fprintf(stdout, "Usage: sectrans <command> [args]\n");
