@@ -74,15 +74,15 @@ Both Server and Clients have access to the wrapped libraries provided by Microha
 
 Here is an example of a communication between the client and the server for a file upload:
 
-![Upload](doc/assets/upload.svg)
+![Upload](doc/assets/upload.png)
 
 This is how a download works:
 
-![Download](doc/assets/download.svg)
+![Download](doc/assets/download.png)
 
 And this is the way it lists files on the server:
 
-![List](doc/assets/list.svg)
+![List](doc/assets/list.png)
 
 ## 2. Security Architecture:
 
