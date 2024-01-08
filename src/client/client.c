@@ -59,6 +59,8 @@ void usage() {
 
 int upload(char *filepath) {
     /* Sends UP and the full filepath and then the file content in base64 separated by char 31 */
+    start();
+
     char separator[1];
     separator[0] = 31;
 
@@ -107,7 +109,7 @@ int upload(char *filepath) {
     // Send UP and filepath
     strcpy(msg, "UP");
     strcat(msg, separator);
-    strcat(msg, filepath);
+    strcat(msg, filepath);      // TODO remove null terminator
     strcat(msg, separator);
     strcat(msg, encodedFile);
 
@@ -119,6 +121,15 @@ int upload(char *filepath) {
         fprintf(stderr, "Failed to send message to the server\n");
         return 1;
     }
+
+    // Free memory
+    free(buffer);
+    free(encodedFile);
+    free(msg);
+
+    stop();
+
+    return 0;
 }
 
 int download(char *filepath) {
@@ -127,6 +138,8 @@ int download(char *filepath) {
 
 int list() {
     /* Sends LS and then listen for the response and print it */
+    start();
+
     char* msg = "LS";
 
     // Send the message
@@ -150,6 +163,10 @@ int list() {
     // Print the response
     printf("%s\n", response);
 
+    // Free memory
+    free(response);
+
+    stop();
     return 0;
 }
 
