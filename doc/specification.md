@@ -143,3 +143,5 @@ These attacks, although very simple, were unable to break our program, wich exit
 This program, used with a ssh tunnel, is a secure way of accessing files over the internet.
 
 It is difficult to justify the need for another tool using proprietary libraries from MicroHard when open source, well tested alternatives such as `scp` and `rsync` exist.
+
+Maxime BILLY, Timothée JUILLET, Loïc PANTANO
