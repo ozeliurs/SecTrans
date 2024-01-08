@@ -31,7 +31,7 @@ int upload(char *filepath) {
     /* Sends UP and the full filepath and then the file content in base64 separated by char 31 */
     start();
 
-    char* separator = "\x1F";
+    char *separator = "\x1F";
 
     // Open the file in read mode
     FILE *file = fopen(filepath, "r");
@@ -102,14 +102,24 @@ int upload(char *filepath) {
 }
 
 int download(char *filepath) {
-    return 1;
-}
-
-int list() {
-    /* Sends LS and then listen for the response and print it */
+    /* Sends DL and the full filepath and then listen for the response and write it to a file */
     start();
 
-    char* msg = "LS";
+    char *separator = "\x1F";
+
+    // Create the message
+    char *msg = malloc(strlen("DL") + strlen(filepath) + 1);
+
+    // Check if memory allocation was successful
+    if (msg == NULL) {
+        printf("Memory allocation error.\n");
+        return 2; // Return an error code
+    }
+
+    // Send DL and filepath
+    strcpy(msg, "DL");
+    strcat(msg, separator);
+    strcat(msg, filepath);
 
     // Send the message
     int result = put(msg);
@@ -121,7 +131,64 @@ int list() {
     }
 
     // Get the response
-    char* response = get();
+    char *response = get();
+
+    // Check if error
+    if (response == NULL) {
+        fprintf(stderr, "Failed to get response from the server\n");
+        return 1;
+    }
+
+    // Decode base64
+    char *decodedFileContents = base64_decode(response);
+
+    // Check if error
+    if (decodedFileContents == NULL) {
+        fprintf(stderr, "Failed to decode file contents\n");
+        return 1;
+    }
+
+    // Create the file
+    FILE *file = fopen(filepath, "w");
+
+    // Check if error
+    if (file == NULL) {
+        fprintf(stderr, "Failed to create file %s\n", filepath);
+        return 1;
+    }
+
+    // Write the file contents
+    fwrite(decodedFileContents, sizeof(char), strlen(decodedFileContents), file);
+
+    // Close the file
+    fclose(file);
+
+    // Free memory
+    free(response);
+    free(decodedFileContents);
+
+    stop();
+
+    return 0;
+}
+
+int list() {
+    /* Sends LS and then listen for the response and print it */
+    start();
+
+    char *msg = "LS";
+
+    // Send the message
+    int result = put(msg);
+
+    // Check if error
+    if (result != 0) {
+        fprintf(stderr, "Failed to send message to the server\n");
+        return 1;
+    }
+
+    // Get the response
+    char *response = get();
 
     // Check if error
     if (response == NULL) {

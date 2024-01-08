@@ -43,6 +43,8 @@ char* _get() {
             j++;
         }
 
+        printf("Received %d bytes\n", j);
+
         // If chunk is not full, stop reading
         if (j < (1024 - 1)) {
             break;

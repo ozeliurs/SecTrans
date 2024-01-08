@@ -36,8 +36,10 @@ char* list() {
     return list;
 }
 
-int download(char *filename) {
-    // Open file
+char* download(char *filename) {
+    /* Reads the file and returns it in base64 */
+    printf("Download\n");
+    // Open the file in read mode
     char *filepath = (char *) malloc((strlen(filename) + 10) * sizeof(char));
     strcpy(filepath, "./storage/");
     strcat(filepath, filename);
@@ -45,22 +47,36 @@ int download(char *filename) {
 
     if (file == NULL) {
         fprintf(stderr, "Failed to open file %s\n", filepath);
-        return 1;
+        return NULL;
     }
 
-    // Get file size
-    fseek(file, 0L, SEEK_END);
-    int filesize = ftell(file);
-    rewind(file);
+    // Find the size of the file
+    fseek(file, 0, SEEK_END);
+    long fileSize = ftell(file);
+    fseek(file, 0, SEEK_SET);
 
-    // Read file
-    char *contents = (char *) malloc(filesize * sizeof(char));
-    fread(contents, sizeof(char), filesize, file);
+    // Create a buffer large enough to contain the file
+    char *buffer = malloc(fileSize + 1);
 
-    // Close file
+    // Read the file into the buffer
+    fread(buffer, fileSize, 1, file);
+
+    // Close the file
     fclose(file);
 
-    return contents;
+    // Encode the file in base64
+    char *encodedFile = base64_encode(buffer, fileSize);
+
+    // Check if encoding was successful
+    if (encodedFile == NULL) {
+        printf("Error encoding the file.\n");
+        return NULL;
+    }
+
+    // Null terminate the string
+    // encodedFile[strlen(encodedFile)] = '\0';
+
+    return encodedFile;
 }
 
 int upload(char *contents) {
@@ -138,6 +154,7 @@ int main() {
             char* filename = (char*)malloc((strlen(msg) - 2) * sizeof(char));
             strncpy(filename, msg + 3, strlen(msg) - 2);
             char* contents = download(filename);
+            sleep(1);
             put(contents);
             free(filename);
             free(contents);

@@ -34,6 +34,8 @@ int _put(char *msg, int port) {
         // Send chunk
         int result = sndmsg(chunk, port);
 
+        printf("Sent %d bytes\n", j);
+
         // Check if error
         if (result != 0) {
             fprintf(stderr, "Failed to send message to the server\n");

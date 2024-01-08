@@ -14,11 +14,14 @@ server: build src/server/server.c link
 run_client_list: client
 	cd build && ./client -list
 
+run_client_put: client
+	cd build && echo "pipi" > pipi && ./client -up pipi
+
 run_client_get: client
-	cd build && echo "pipi" > ./pipi && ./client -up ./pipi
+	cd build && ./client -down caca
 
 run_server: server
-	cd build && mkdir -p storage && touch storage/caca && ./server
+	cd build && mkdir -p storage && echo "caca" > storage/caca && ./server
 
 clear: clean
 

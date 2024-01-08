@@ -22,7 +22,7 @@ int stop() {
 }
 
 int put(char *msg) {
-    printf("Server has put.\n");
+    printf("Server has put. Message: %s\n", msg);
     return _put(msg, CLIENT_PORT);
 }
 
